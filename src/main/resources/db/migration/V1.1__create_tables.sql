@@ -1,0 +1,14 @@
+create table category (id integer not null, name varchar(255), parent_category integer, primary key (id));
+create table customer (id integer not null, city varchar(255), country_code varchar(255), created_at date, email varchar(255), name varchar(255), phone varchar(255), profile_pic varchar(255), state varchar(255), street varchar(255), primary key (id));
+create table "order" (id integer not null, created_at varchar(255), status varchar(255), updated_at varchar(255), customer_id integer, primary key (id));
+create table order_item (id integer not null, quantity varchar(255), order_id integer, product_id integer, primary key (id));
+create table product (id integer not null, description varchar(255), image varchar(255), name varchar(255), unit_price varchar(255), category_id integer, primary key (id));
+create sequence category_seq start with 1 increment by 50;
+create sequence customer_seq start with 1 increment by 50;
+create sequence order_item_seq start with 1 increment by 50;
+create sequence order_seq start with 1 increment by 50;
+create sequence product_seq start with 1 increment by 50;
+alter table if exists "order" add constraint FKb8tboo4d95mh8gavvovwbb7vg foreign key (customer_id) references customer;
+alter table if exists order_item add constraint FKt6wv8m7eshksp5kp8w4b2d1dm foreign key (order_id) references "order";
+alter table if exists order_item add constraint FK551losx9j75ss5d6bfsqvijna foreign key (product_id) references product;
+alter table if exists product add constraint FK1mtsbur82frn64de7balymq9s foreign key (category_id) references category;
