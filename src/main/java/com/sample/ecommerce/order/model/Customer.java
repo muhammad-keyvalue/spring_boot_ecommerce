@@ -1,11 +1,14 @@
 package com.sample.ecommerce.order.model;
 
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Entity;
 import lombok.Getter;
@@ -17,7 +20,7 @@ import lombok.Setter;
 public class Customer {
  
   @Id
-  @GeneratedValue()
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;   
    
   private String name;
@@ -34,7 +37,8 @@ public class Customer {
 
   private String profilePic;
 
-  private Date createdAt;
+  @CreationTimestamp
+  private LocalDateTime createdAt;
 
   private String countryCode;
 
