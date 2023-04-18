@@ -5,12 +5,21 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.GenerationType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class OrderItem {
   
@@ -18,14 +27,16 @@ public class OrderItem {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;  
 
-  private String quantity;
+  private Integer quantity;
 
   @ManyToOne
   @JoinColumn(name = "order_id")
-  private Order order;
+  @JsonIgnore
+  private Orders order;
 
   @ManyToOne
   @JoinColumn(name = "product_id")
+  @JsonIgnore
   private Product product;
 
   
