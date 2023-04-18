@@ -1,8 +1,8 @@
 package com.sample.ecommerce.order.repository;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.sample.ecommerce.order.model.Orders;
 
-@Repository
-public class OrderRepository {
-  
+public interface OrderRepository extends JpaRepository<Orders, Integer> {
+
 }
