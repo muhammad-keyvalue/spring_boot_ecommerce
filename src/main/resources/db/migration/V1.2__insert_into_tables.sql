@@ -16,8 +16,8 @@ values
 insert into product(name,image,unit_price,description,category_id)
 values
 ('Washing Machine','http://schulist.org/molestiae-sunt',1,'Home Appliance',1),
-('Galaxy A7','http://schulist.org/molestiae-sunt',1,'Smartphone',3),
-('Polo tshirt','http://schulist.org/molestiae-sunt',1,'Men Clothing',4),
-('Adidas tshirt','http://schulist.org/molestiae-sunt',1,'Men Clothing',4),
-('Lenovo M7','http://schulist.org/molestiae-sunt',1,'Tablet',3),
-('Woodland Shoes','http://schulist.org/molestiae-sunt',1,'Men Footwear',2);
+('Galaxy A7','http://schulist.org/molestiae-sunt',4,'Smartphone',3),
+('Polo tshirt','http://schulist.org/molestiae-sunt',6,'Men Clothing',4),
+('Adidas tshirt','http://schulist.org/molestiae-sunt',3,'Men Clothing',4),
+('Lenovo M7','http://schulist.org/molestiae-sunt',2,'Tablet',3),
+('Woodland Shoes','http://schulist.org/molestiae-sunt',6,'Men Footwear',2);
