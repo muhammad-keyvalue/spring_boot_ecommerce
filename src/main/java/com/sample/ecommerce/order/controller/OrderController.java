@@ -16,6 +16,8 @@ import com.sample.ecommerce.order.dto.OrderDto;
 import com.sample.ecommerce.order.model.Orders;
 import com.sample.ecommerce.order.service.OrderService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/order/v1/orders")
 public class OrderController {
@@ -28,7 +30,7 @@ public class OrderController {
    */
 
    @PostMapping()
-   public Orders create(@RequestBody OrderDto createOrder){
+   public Orders create(@Valid @RequestBody OrderDto createOrder){
     return service.create(createOrder);
    }
 
@@ -42,7 +44,7 @@ public class OrderController {
    }
 
    @PutMapping("/{id}")
-   public Orders update(@PathVariable int id, @RequestBody OrderDto updateOrder){
+   public Orders update(@PathVariable int id, @Valid @RequestBody OrderDto updateOrder){
     return service.update(id,updateOrder);
    }
 
