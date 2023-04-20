@@ -3,7 +3,6 @@ package com.sample.ecommerce.order.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.grammars.hql.HqlParser.IsEmptyPredicateContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
