@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.sample.ecommerce.order.constants.OrderStatus;
 import com.sample.ecommerce.order.dto.OrderDto;
 import com.sample.ecommerce.order.dto.OrderItemDto;
+import com.sample.ecommerce.order.exception.ObjectNotFoundException;
 import com.sample.ecommerce.order.model.Orders;
 import com.sample.ecommerce.order.model.OrderItem;
 import com.sample.ecommerce.order.model.Product;
@@ -78,20 +79,27 @@ public class OrderService {
   }
 
   public Orders findOne(int id) {
+    try{
     return repository.findById(id).get();
-  }
+    }
+    catch(Exception e)
+    {
+      throw new ObjectNotFoundException(Orders.class);
+    }
 
+  }
   public List<Orders> findAll() {
     return repository.findAll();
   }
 
-  public void delete(int id) {
-    repository.deleteById(id);
+  public void delete(int id){
+    Orders order = this.findOne(id);
+    repository.delete(order);
     log.info("Deleted order with order_id - {}",id);
   }
 
   public Orders update(Integer orderId, OrderDto updateOrderDto) {
-    Orders order = repository.findById(orderId).get();
+    Orders order = this.findOne(orderId);
     log.info("Updating order with order_id - {} ",orderId);
     Orders updatedOrder= createOrderfromDto(order, updateOrderDto);
     log.info("Order details : order_id - {}, total_price - {}, total_quantity - {}, customer_id - {}, order_status - {}" ,order.getId(),order.getTotalPrice(),order.getTotalQuantity(),order.getCustomer().getId(),order.getStatus());
