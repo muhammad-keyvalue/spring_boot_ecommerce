@@ -16,6 +16,9 @@ import com.sample.ecommerce.order.repository.CustomerRepository;
 import com.sample.ecommerce.order.repository.OrderRepository;
 import com.sample.ecommerce.order.repository.ProductRepository;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Service
 public class OrderService {
 
@@ -30,8 +33,11 @@ public class OrderService {
 
 
   public Orders create(OrderDto orderDto) {
-    Orders newOrder= new Orders();
-    return repository.save(createOrderfromDto(newOrder,orderDto));
+    log.info("Creating order for customer - {}" , orderDto.getCustomerId());
+    Orders order= new Orders();
+    Orders createdOrder = repository.save(createOrderfromDto(order,orderDto));
+    log.info("Order details : order_id - {}, total_price - {}, total_quantity - {}, customer_id - {}, order_status - {}" ,order.getId(),order.getTotalPrice(),order.getTotalQuantity(),orderDto.getCustomerId(),order.getStatus());
+    return createdOrder;
   }
 
 
@@ -81,11 +87,14 @@ public class OrderService {
 
   public void delete(int id) {
     repository.deleteById(id);
+    log.info("Deleted order with order_id - {}",id);
   }
 
   public Orders update(Integer orderId, OrderDto updateOrderDto) {
     Orders order = repository.findById(orderId).get();
+    log.info("Updating order with order_id - {} ",orderId);
     Orders updatedOrder= createOrderfromDto(order, updateOrderDto);
+    log.info("Order details : order_id - {}, total_price - {}, total_quantity - {}, customer_id - {}, order_status - {}" ,order.getId(),order.getTotalPrice(),order.getTotalQuantity(),order.getCustomer().getId(),order.getStatus());
     return repository.save(updatedOrder);
   }
 
