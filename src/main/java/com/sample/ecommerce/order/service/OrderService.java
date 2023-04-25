@@ -11,6 +11,7 @@ import com.sample.ecommerce.order.dto.OrderDto;
 import com.sample.ecommerce.order.dto.OrderItemDto;
 import com.sample.ecommerce.order.exception.ObjectNotFoundException;
 import com.sample.ecommerce.order.model.Orders;
+import com.sample.ecommerce.order.model.Customer;
 import com.sample.ecommerce.order.model.OrderItem;
 import com.sample.ecommerce.order.model.Product;
 import com.sample.ecommerce.order.repository.CustomerRepository;
@@ -34,6 +35,10 @@ public class OrderService {
 
 
   public Orders create(OrderDto orderDto) {
+  
+    if(customerRepository.findById(orderDto.getCustomerId()).isEmpty())
+      throw new ObjectNotFoundException(Customer.class);
+  
     log.info("Creating order for customer - {}" , orderDto.getCustomerId());
     Orders order= new Orders();
     Orders createdOrder = repository.save(createOrderfromDto(order,orderDto));
@@ -84,7 +89,7 @@ public class OrderService {
     }
     catch(Exception e)
     {
-      throw new ObjectNotFoundException(Orders.class);
+      throw new ObjectNotFoundException(Orders.class,"order");
     }
 
   }
