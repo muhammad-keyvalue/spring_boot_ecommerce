@@ -13,7 +13,7 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sample.ecommerce.order.constants.OrderStatus;
 
 import jakarta.persistence.CascadeType;
@@ -55,10 +55,11 @@ public class Orders {
 
   @ManyToOne
   @JoinColumn(name = "customer_id")
-  @JsonIgnore
+  @JsonManagedReference
   private Customer customer;
 
   @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+  @JsonManagedReference
   private List<OrderItem> orderItems;
 
 }

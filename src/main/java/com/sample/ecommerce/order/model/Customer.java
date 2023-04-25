@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,6 +51,7 @@ public class Customer {
   private String countryCode;
 
   @OneToMany(mappedBy = "customer")
+  @JsonBackReference
   private List<Orders> orders;
 
 }

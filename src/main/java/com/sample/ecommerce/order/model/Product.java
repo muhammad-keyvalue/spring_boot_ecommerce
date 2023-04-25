@@ -3,7 +3,8 @@ package com.sample.ecommerce.order.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,11 +40,12 @@ public class Product {
   private Integer unitPrice;
 
   @OneToMany(mappedBy = "product")
+  @JsonBackReference
   private List<OrderItem> orderItems;
 
   @ManyToOne
   @JoinColumn(name = "category_id")
-  @JsonIgnore
+  @JsonManagedReference
   private Category category;
 
 
