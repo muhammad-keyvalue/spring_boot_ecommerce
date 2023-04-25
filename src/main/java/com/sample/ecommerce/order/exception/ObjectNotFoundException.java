@@ -12,4 +12,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
     public <T> ObjectNotFoundException(Class<T> entity) {
         super(HttpStatus.NOT_FOUND, ExceptionCodes.OBJECT_NOT_FOUND, entity.getSimpleName() + " not found");
     }
+
+    public <T> ObjectNotFoundException(Class<T> entity, String simpleName) {
+      super(HttpStatus.NOT_FOUND, ExceptionCodes.OBJECT_NOT_FOUND, simpleName + " not found");
+  }
 }
