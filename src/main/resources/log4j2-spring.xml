@@ -17,9 +17,6 @@
      <!-- Log SQL statements -->
         <Logger name="org.hibernate.SQL" level="debug"></Logger>
 
-     <!-- Log SQL parameters -->
-        <Logger name="org.hibernate.orm.jdbc.bind" level="trace"></Logger>
-
     </Loggers>
 
 </Configuration>
