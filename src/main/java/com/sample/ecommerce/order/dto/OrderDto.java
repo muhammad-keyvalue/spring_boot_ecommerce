@@ -7,12 +7,14 @@ import lombok.NoArgsConstructor;
 import com.sample.ecommerce.order.constants.OrderStatus;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class OrderDto {
  
   private Integer customerId;
