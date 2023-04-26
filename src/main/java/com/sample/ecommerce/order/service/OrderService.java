@@ -40,8 +40,8 @@ public class OrderService {
       throw new ObjectNotFoundException(Customer.class);
   
     log.info("Creating order for customer - {}" , orderDto.getCustomerId());
-    Orders order= new Orders();
-    Orders createdOrder = repository.save(createOrderfromDto(order,orderDto));
+    Orders order= createOrderfromDto(new Orders(),orderDto);
+    Orders createdOrder = repository.save(order);
     log.info("Order details : order_id - {}, total_price - {}, total_quantity - {}, customer_id - {}, order_status - {}" ,order.getId(),order.getTotalPrice(),order.getTotalQuantity(),orderDto.getCustomerId(),order.getStatus());
     return createdOrder;
   }
@@ -52,8 +52,12 @@ public class OrderService {
     int totalPrice = 0;
     List<OrderItem> orderItems = new ArrayList<OrderItem>();
     Product product = new Product();
-
     int itemId, price;
+
+    order = order.toBuilder().status((orderDto.getStatus()!=null)?orderDto.getStatus():OrderStatus.INITIATED)
+    .totalQuantity(totalQuantity)
+    .totalPrice(totalPrice)
+    .customer(customerRepository.findById(orderDto.getCustomerId()).get()).build();
 
     for(OrderItemDto item : orderDto.getOrderItems()){
       totalQuantity+=item.getQuantity();
@@ -62,23 +66,12 @@ public class OrderService {
       price = product.getUnitPrice();
       totalPrice +=(item.getQuantity() * price);
     
-   
-    OrderItem orderItem = new OrderItem();
-    orderItem.setQuantity(item.getQuantity());
-    orderItem.setProduct(product);
-    orderItem.setOrder(order);
-    orderItems.add(orderItem);
+      OrderItem orderItem = OrderItem.builder().quantity(item.getQuantity()).product(product).order(order).build();
+      orderItems.add(orderItem);
     }
 
-    if(orderDto.getStatus()== null)
-      order.setStatus(OrderStatus.INITIATED);
-    else
-      order.setStatus(orderDto.getStatus());
-    order.setTotalQuantity(totalQuantity);
-    order.setTotalPrice(totalPrice);
     order.setOrderItems(orderItems);
-    order.setCustomer(customerRepository.findById(orderDto.getCustomerId()).get());
-
+    
     return order;
 
   }
