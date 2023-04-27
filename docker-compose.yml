@@ -2,21 +2,32 @@ version: '3.1'
 
 services:
   postgres:
-    container_name: order-postgresDB
     image: postgres:14.5-alpine
     user: postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: order_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=order_db
+
     ports:
-      - '5432:5432'
+      - 5432:5432
     volumes:
       - order-postgres:/var/lib/postgresql/data
-   
 
 
-
+  order:
+    depends_on:
+      - postgres
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+        - SPRING.DATASOURCE.URL=jdbc:postgresql://postgres:5432/order_db
+        - SPRING.DATASOURCE.USERNAME=postgres
+        - SPRING.DATASOURCE.PASSWORD=postgres
+    ports:
+      - 8080:8080
+    
 volumes:
   order-postgres:
       driver: local
