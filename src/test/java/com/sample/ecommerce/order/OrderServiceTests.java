@@ -23,7 +23,7 @@ import com.sample.ecommerce.order.dto.OrderItemDto;
 import com.sample.ecommerce.order.exception.ObjectNotFoundException;
 import com.sample.ecommerce.order.model.Category;
 import com.sample.ecommerce.order.model.Customer;
-import com.sample.ecommerce.order.model.Orders;
+import com.sample.ecommerce.order.model.Order;
 import com.sample.ecommerce.order.model.OrderItem;
 import com.sample.ecommerce.order.model.Product;
 import com.sample.ecommerce.order.repository.CustomerRepository;
@@ -53,14 +53,14 @@ public class OrderServiceTests {
     int randomId = 2;
     final int totalPrice = 20;
     final int quantity = 4;
-    Orders order = Orders.builder()
+    Order order = Order.builder()
         .id(randomId)
         .totalQuantity(quantity)
         .totalPrice(totalPrice)
         .build();
 
     Mockito.when(orderRepository.findById(anyInt())).thenReturn(Optional.of(order));
-    Orders obtainedOrder = orderService.findOne(1);
+    Order obtainedOrder = orderService.findOne(1);
     assertEquals(obtainedOrder, order);
   }
 
@@ -78,7 +78,7 @@ public class OrderServiceTests {
     Mockito.when(productRepository.findById(productId))
     .thenReturn(Optional.of(getSampleProduct(productId)));
 
-    Orders order = Orders.builder()
+    Order order = Order.builder()
     .id(randomId)
     .customer(getSampleCustomer(customerId))
     .status(OrderStatus.INITIATED)
@@ -96,7 +96,7 @@ public class OrderServiceTests {
                         .build();
 
     Mockito.when(orderRepository.save(any())).thenReturn(order);
-    Orders obtainedOrder = orderService.create(orderDto);
+    Order obtainedOrder = orderService.create(orderDto);
     assertEquals(obtainedOrder, order);
 }
 
@@ -157,7 +157,7 @@ private Category getSampleCategory(){
         .build();
 }
 
-private List<OrderItem> getSampleOrderItems(Orders order,int productId, int quantity){
+private List<OrderItem> getSampleOrderItems(Order order,int productId, int quantity){
   List<OrderItem> orderItems = new ArrayList<OrderItem>();
   orderItems.add(OrderItem.builder().order(order).quantity(quantity).product(getSampleProduct(productId)).build());
 return orderItems;

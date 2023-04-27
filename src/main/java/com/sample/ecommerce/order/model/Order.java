@@ -5,6 +5,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.persistence.GenerationType;
 
 import java.time.LocalDateTime;
@@ -33,7 +34,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder(toBuilder=true)
 @Entity
-public class Orders {
+@Table(name="\"order\"")
+public class Order {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

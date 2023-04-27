@@ -54,6 +54,6 @@ public class Customer {
 
   @OneToMany(mappedBy = "customer")
   @JsonBackReference
-  private List<Orders> orders;
+  private List<Order> orders;
 
 }

@@ -10,7 +10,7 @@ import com.sample.ecommerce.order.constants.OrderStatus;
 import com.sample.ecommerce.order.dto.OrderDto;
 import com.sample.ecommerce.order.dto.OrderItemDto;
 import com.sample.ecommerce.order.exception.ObjectNotFoundException;
-import com.sample.ecommerce.order.model.Orders;
+import com.sample.ecommerce.order.model.Order;
 import com.sample.ecommerce.order.model.Customer;
 import com.sample.ecommerce.order.model.OrderItem;
 import com.sample.ecommerce.order.model.Product;
@@ -34,20 +34,20 @@ public class OrderService {
   ProductRepository productRepository;
 
 
-  public Orders create(OrderDto orderDto) {
+  public Order create(OrderDto orderDto) {
   
     if(customerRepository.findById(orderDto.getCustomerId()).isEmpty())
       throw new ObjectNotFoundException(Customer.class);
   
     log.info("Creating order for customer - {}" , orderDto.getCustomerId());
-    Orders order= createOrderfromDto(new Orders(),orderDto);
-    Orders createdOrder = repository.save(order);
+    Order order= createOrderfromDto(new Order(),orderDto);
+    Order createdOrder = repository.save(order);
     log.info("Order details : order_id - {}, total_price - {}, total_quantity - {}, customer_id - {}, order_status - {}" ,order.getId(),order.getTotalPrice(),order.getTotalQuantity(),orderDto.getCustomerId(),order.getStatus());
     return createdOrder;
   }
 
 
-  public Orders createOrderfromDto(Orders order,OrderDto orderDto) {
+  public Order createOrderfromDto(Order order,OrderDto orderDto) {
     int totalQuantity = 0;
     int totalPrice = 0;
     List<OrderItem> orderItems = new ArrayList<OrderItem>();
@@ -76,30 +76,30 @@ public class OrderService {
 
   }
 
-  public Orders findOne(int id) {
+  public Order findOne(int id) {
     try{
     return repository.findById(id).get();
     }
     catch(Exception e)
     {
-      throw new ObjectNotFoundException(Orders.class,"order");
+      throw new ObjectNotFoundException(Order.class,"order");
     }
 
   }
-  public List<Orders> findAll() {
+  public List<Order> findAll() {
     return repository.findAll();
   }
 
   public void delete(int id){
-    Orders order = this.findOne(id);
+    Order order = this.findOne(id);
     repository.delete(order);
     log.info("Deleted order with order_id - {}",id);
   }
 
-  public Orders update(Integer orderId, OrderDto updateOrderDto) {
-    Orders order = this.findOne(orderId);
+  public Order update(Integer orderId, OrderDto updateOrderDto) {
+    Order order = this.findOne(orderId);
     log.info("Updating order with order_id - {} ",orderId);
-    Orders updatedOrder= createOrderfromDto(order, updateOrderDto);
+    Order updatedOrder= createOrderfromDto(order, updateOrderDto);
     log.info("Order details : order_id - {}, total_price - {}, total_quantity - {}, customer_id - {}, order_status - {}" ,order.getId(),order.getTotalPrice(),order.getTotalQuantity(),order.getCustomer().getId(),order.getStatus());
     return repository.save(updatedOrder);
   }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sample.ecommerce.order.dto.OrderDto;
-import com.sample.ecommerce.order.model.Orders;
+import com.sample.ecommerce.order.model.Order;
 import com.sample.ecommerce.order.service.OrderService;
 
 import jakarta.validation.Valid;
@@ -30,21 +30,21 @@ public class OrderController {
    */
 
    @PostMapping()
-   public Orders create(@Valid @RequestBody OrderDto createOrder){
+   public Order create(@Valid @RequestBody OrderDto createOrder){
     return service.create(createOrder);
    }
 
    @GetMapping("/{id}")
-   public Orders findOne(@PathVariable int id){
+   public Order findOne(@PathVariable int id){
     return service.findOne(id);
    }
    @GetMapping()
-   public List<Orders> findAll(){
+   public List<Order> findAll(){
     return service.findAll();
    }
 
    @PutMapping("/{id}")
-   public Orders update(@PathVariable int id, @Valid @RequestBody OrderDto updateOrder){
+   public Order update(@PathVariable int id, @Valid @RequestBody OrderDto updateOrder){
     return service.update(id,updateOrder);
    }
 
