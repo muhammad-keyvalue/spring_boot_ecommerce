@@ -1,24 +1,19 @@
 package com.sample.ecommerce.order.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-
 import java.time.LocalDateTime;
 import java.util.List;
-
-import org.hibernate.annotations.CreationTimestamp;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import jakarta.persistence.Entity;
-import lombok.Getter;
-import lombok.Setter;
-
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 
 @Getter
@@ -28,11 +23,11 @@ import lombok.Builder;
 @Builder
 @Entity
 public class Customer {
- 
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;   
-   
+  private Integer id;
+
   private String name;
 
   private String phone;

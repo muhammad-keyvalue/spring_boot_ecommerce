@@ -9,13 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ErrorResponse {
 
-    private int statusCode;
-    private String message;
-    private String errorCode;
+  private int statusCode;
+  private String message;
+  private String errorCode;
 
-   
-    public ErrorResponse(String message) {
-        super();
-        this.message = message;
-    }
+  public ErrorResponse(String message) {
+    super();
+    this.message = message;
+  }
 }

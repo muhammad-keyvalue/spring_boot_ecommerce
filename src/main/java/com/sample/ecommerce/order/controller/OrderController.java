@@ -1,7 +1,10 @@
 package com.sample.ecommerce.order.controller;
 
+import com.sample.ecommerce.order.dto.OrderDto;
+import com.sample.ecommerce.order.model.Order;
+import com.sample.ecommerce.order.service.OrderService;
+import jakarta.validation.Valid;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,12 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sample.ecommerce.order.dto.OrderDto;
-import com.sample.ecommerce.order.model.Order;
-import com.sample.ecommerce.order.service.OrderService;
-
-import jakarta.validation.Valid;
-
 @RestController
 @RequestMapping("/order/v1/orders")
 public class OrderController {
@@ -26,32 +23,33 @@ public class OrderController {
   OrderService service;
 
   /*
-   * To check health, we can use actuator which provides the endpoint http://localhost:8080/actuator/health
+   * To check health, we can use actuator which provides the endpoint
+   * http://localhost:8080/actuator/health
    */
 
-   @PostMapping()
-   public Order create(@Valid @RequestBody OrderDto createOrder){
+  @PostMapping()
+  public Order create(@Valid @RequestBody OrderDto createOrder) {
     return service.create(createOrder);
-   }
+  }
 
-   @GetMapping("/{id}")
-   public Order findOne(@PathVariable int id){
+  @GetMapping("/{id}")
+  public Order findOne(@PathVariable int id) {
     return service.findOne(id);
-   }
-   @GetMapping()
-   public List<Order> findAll(){
+  }
+
+  @GetMapping()
+  public List<Order> findAll() {
     return service.findAll();
-   }
+  }
 
-   @PutMapping("/{id}")
-   public Order update(@PathVariable int id, @Valid @RequestBody OrderDto updateOrder){
-    return service.update(id,updateOrder);
-   }
+  @PutMapping("/{id}")
+  public Order update(@PathVariable int id, @Valid @RequestBody OrderDto updateOrder) {
+    return service.update(id, updateOrder);
+  }
 
-   @DeleteMapping("/{id}")
-   public void delete(@PathVariable int id){
+  @DeleteMapping("/{id}")
+  public void delete(@PathVariable int id) {
     service.delete(id);
-   }
-   
-   }
-   
+  }
+
+}
