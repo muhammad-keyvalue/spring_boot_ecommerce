@@ -97,6 +97,28 @@
 					</excludes>
 				</configuration>
 			</plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>3.2.2</version>
+          <configuration>
+              <configLocation>google_checks.xml</configLocation>
+              <linkXRef>false</linkXRef>
+              <suppressionsLocation>
+                src/main/resources/checkstyle-suppressions.xml
+              </suppressionsLocation>
+              <suppressionsFileExpression>
+                checkstyle.suppressions.file
+              </suppressionsFileExpression>
+          </configuration>
+          <executions>
+              <execution>
+                  <goals>
+                      <goal>check</goal>
+                  </goals>
+              </execution>
+          </executions> 
+      </plugin>
 		</plugins>
 	</build>
 
