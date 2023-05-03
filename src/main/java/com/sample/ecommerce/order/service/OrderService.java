@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Log4j2
@@ -41,12 +44,9 @@ public class OrderService {
     Order order = createOrderfromDto(new Order(), orderDto);
     Order createdOrder = repository.save(order);
     log.info(
-        "Order details : order_id - {}, total_price - {}, total_quantity - {}," 
-        + " customer_id - {}, order_status - {}",
-        order.getId(),
-        order.getTotalPrice(),
-        order.getTotalQuantity(),
-        orderDto.getCustomerId(),
+        "Order details : order_id - {}, total_price - {}, total_quantity - {},"
+            + " customer_id - {}, order_status - {}",
+        order.getId(), order.getTotalPrice(), order.getTotalQuantity(), orderDto.getCustomerId(),
         order.getStatus());
     return createdOrder;
   }
@@ -61,8 +61,7 @@ public class OrderService {
     int price;
     order = order.toBuilder()
         .status((orderDto.getStatus() != null) ? orderDto.getStatus() : OrderStatus.INITIATED)
-        .totalQuantity(totalQuantity)
-        .totalPrice(totalPrice)
+        .totalQuantity(totalQuantity).totalPrice(totalPrice)
         .customer(customerRepository.findById(orderDto.getCustomerId()).get()).build();
 
     for (OrderItemDto item : orderDto.getOrderItems()) {
@@ -72,11 +71,8 @@ public class OrderService {
       price = product.getUnitPrice();
       totalPrice += (item.getQuantity() * price);
 
-      OrderItem orderItem = OrderItem.builder()
-          .quantity(item.getQuantity())
-          .product(product)
-          .order(order)
-          .build();
+      OrderItem orderItem =
+          OrderItem.builder().quantity(item.getQuantity()).product(product).order(order).build();
       orderItems.add(orderItem);
     }
 
@@ -95,6 +91,11 @@ public class OrderService {
 
   }
 
+  public Page<Order> findAll(int page, int size, Sort sort) {
+    PageRequest pageable = PageRequest.of(page, size, sort);
+    return repository.findAll(pageable);
+  }
+
   public List<Order> findAll() {
     return repository.findAll();
   }
@@ -108,19 +109,13 @@ public class OrderService {
   public Order update(Integer orderId, UpdateOrderDto updateOrderDto) {
     Order order = this.findOne(orderId);
     log.info("Updating order with order_id - {} ", orderId);
-    OrderDto orderDto = OrderDto.builder()
-                        .customerId(order.getCustomer().getId())
-                        .status(updateOrderDto.getStatus())
-                        .orderItems(updateOrderDto.getOrderItems())
-                        .build();
+    OrderDto orderDto = OrderDto.builder().customerId(order.getCustomer().getId())
+        .status(updateOrderDto.getStatus()).orderItems(updateOrderDto.getOrderItems()).build();
     Order updatedOrder = createOrderfromDto(order, orderDto);
     log.info(
-        "Order details : order_id - {}, total_price - {}, total_quantity - {}," 
-        + " customer_id - {}, order_status - {}",
-        order.getId(),
-        order.getTotalPrice(),
-        order.getTotalQuantity(),
-        orderDto.getCustomerId(),
+        "Order details : order_id - {}, total_price - {}, total_quantity - {},"
+            + " customer_id - {}, order_status - {}",
+        order.getId(), order.getTotalPrice(), order.getTotalQuantity(), orderDto.getCustomerId(),
         order.getStatus());
     return repository.save(updatedOrder);
   }

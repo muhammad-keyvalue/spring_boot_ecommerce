@@ -7,6 +7,8 @@ import com.sample.ecommerce.order.service.OrderService;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -21,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
   @Autowired
-  OrderService service;
+  OrderService orderservice;
 
   /*
    * To check health, we can use actuator which provides the endpoint
@@ -30,27 +33,36 @@ public class OrderController {
 
   @PostMapping()
   public Order create(@Valid @RequestBody OrderDto createOrder) {
-    return service.create(createOrder);
+    return orderservice.create(createOrder);
   }
 
   @GetMapping("/{id}")
   public Order findOne(@PathVariable int id) {
-    return service.findOne(id);
+    return orderservice.findOne(id);
+  }
+
+  @GetMapping("/paginated")
+  public Page<Order> findAll(@RequestParam int page, @RequestParam int size,
+      @RequestParam(required = false) Sort sort) {
+    if (sort == null)
+      sort = Sort.unsorted();
+    return orderservice.findAll(page, size, sort);
   }
 
   @GetMapping()
   public List<Order> findAll() {
-    return service.findAll();
+    return orderservice.findAll();
   }
+
 
   @PutMapping("/{id}")
   public Order update(@PathVariable int id, @Valid @RequestBody UpdateOrderDto updateOrder) {
-    return service.update(id, updateOrder);
+    return orderservice.update(id, updateOrder);
   }
 
   @DeleteMapping("/{id}")
   public void delete(@PathVariable int id) {
-    service.delete(id);
+    orderservice.delete(id);
   }
 
 }
