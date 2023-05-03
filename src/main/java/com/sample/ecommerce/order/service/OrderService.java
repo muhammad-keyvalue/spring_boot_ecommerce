@@ -3,6 +3,7 @@ package com.sample.ecommerce.order.service;
 import com.sample.ecommerce.order.constants.OrderStatus;
 import com.sample.ecommerce.order.dto.OrderDto;
 import com.sample.ecommerce.order.dto.OrderItemDto;
+import com.sample.ecommerce.order.dto.UpdateOrderDto;
 import com.sample.ecommerce.order.exception.ObjectNotFoundException;
 import com.sample.ecommerce.order.model.Customer;
 import com.sample.ecommerce.order.model.Order;
@@ -104,17 +105,22 @@ public class OrderService {
     log.info("Deleted order with order_id - {}", id);
   }
 
-  public Order update(Integer orderId, OrderDto updateOrderDto) {
+  public Order update(Integer orderId, UpdateOrderDto updateOrderDto) {
     Order order = this.findOne(orderId);
     log.info("Updating order with order_id - {} ", orderId);
-    Order updatedOrder = createOrderfromDto(order, updateOrderDto);
+    OrderDto orderDto = OrderDto.builder()
+                        .customerId(order.getCustomer().getId())
+                        .status(updateOrderDto.getStatus())
+                        .orderItems(updateOrderDto.getOrderItems())
+                        .build();
+    Order updatedOrder = createOrderfromDto(order, orderDto);
     log.info(
         "Order details : order_id - {}, total_price - {}, total_quantity - {}," 
         + " customer_id - {}, order_status - {}",
         order.getId(),
         order.getTotalPrice(),
         order.getTotalQuantity(),
-        updateOrderDto.getCustomerId(),
+        orderDto.getCustomerId(),
         order.getStatus());
     return repository.save(updatedOrder);
   }

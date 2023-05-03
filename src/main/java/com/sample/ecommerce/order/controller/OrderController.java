@@ -1,6 +1,7 @@
 package com.sample.ecommerce.order.controller;
 
 import com.sample.ecommerce.order.dto.OrderDto;
+import com.sample.ecommerce.order.dto.UpdateOrderDto;
 import com.sample.ecommerce.order.model.Order;
 import com.sample.ecommerce.order.service.OrderService;
 import jakarta.validation.Valid;
@@ -43,7 +44,7 @@ public class OrderController {
   }
 
   @PutMapping("/{id}")
-  public Order update(@PathVariable int id, @Valid @RequestBody OrderDto updateOrder) {
+  public Order update(@PathVariable int id, @Valid @RequestBody UpdateOrderDto updateOrder) {
     return service.update(id, updateOrder);
   }
 
