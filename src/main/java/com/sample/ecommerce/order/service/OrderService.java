@@ -89,7 +89,7 @@ public class OrderService {
     try {
       return repository.findById(id).get();
     } catch (Exception e) {
-      throw new ObjectNotFoundException(Order.class, "order");
+      throw new ObjectNotFoundException(Order.class);
     }
 
   }

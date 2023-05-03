@@ -15,7 +15,4 @@ public class ObjectNotFoundException extends CommonException {
         entity.getSimpleName() + " not found");
   }
 
-  public <T> ObjectNotFoundException(Class<T> entity, String simpleName) {
-    super(HttpStatus.NOT_FOUND, ExceptionCodes.OBJECT_NOT_FOUND, simpleName + " not found");
-  }
 }
