@@ -38,7 +38,6 @@ public class Order {
   private Integer id;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "status")
   private OrderStatus status;
 
   @CreationTimestamp
