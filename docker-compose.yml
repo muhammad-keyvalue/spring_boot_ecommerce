@@ -27,6 +27,26 @@ services:
         - SPRING.DATASOURCE.PASSWORD=postgres
     ports:
       - 8080:8080
+
+  migrate-up:
+    image: redgate/flyway:9-alpine
+    profiles:
+      - flyway
+    command: -url=jdbc:postgresql://postgres:5432/order_db -schemas=orders -user=postgres -password=postgres  migrate
+    volumes:
+      - ./src/main/resources/db/migration:/flyway/sql
+    depends_on:
+      - postgres
+  
+  migrate-down:
+    image: redgate/flyway:9-alpine
+    profiles:
+      - flyway
+    command: -url=jdbc:postgresql://postgres:5432/order_db -schemas=orders -user=postgres -password=postgres  undo
+    volumes:
+      - ./src/main/resources/db/migration:/flyway/sql
+    depends_on:
+      - postgres
     
 volumes:
   order-postgres:
