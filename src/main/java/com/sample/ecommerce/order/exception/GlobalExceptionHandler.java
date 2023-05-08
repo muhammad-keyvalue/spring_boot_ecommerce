@@ -1,17 +1,15 @@
 package com.sample.ecommerce.order.exception;
 
 import com.sample.ecommerce.order.exception.dto.ErrorResponse;
+import com.sample.ecommerce.order.util.ResponseDto;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,31 +20,50 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(value = CommonException.class)
-  public @ResponseBody ResponseEntity<ErrorResponse> handleCommonException(CommonException ex) {
+  public @ResponseBody ResponseEntity<ResponseDto> handleCommonException(CommonException ex) {
     log.error(ex.getStatusCode() + ":" + ex.getMessage());
-    return ResponseEntity.status(ex.getStatusCode()).body(new ErrorResponse(
-        ex.getStatusCode().value(), ex.getMessage(), ex.getErrorCode()));
+    ErrorResponse errorResponse =new ErrorResponse(
+      ex.getStatusCode().value(), ex.getMessage(), ex.getErrorCode());
+    return ResponseEntity.status(ex.getStatusCode()).body(new ResponseDto(null,errorResponse,null));
   }
 
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Map<String, List<String>>> handleValidationErrors(MethodArgumentNotValidException ex) {
-    List<String> errors = ex.getBindingResult().getFieldErrors()
-        .stream().map(FieldError::getDefaultMessage).collect(Collectors.toList());
-    return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+@ExceptionHandler(MethodArgumentNotValidException.class)
+public @ResponseBody ResponseEntity<ResponseDto> handleValidationErrors(MethodArgumentNotValidException ex) {
+  List<String> errors = new ArrayList<String>();
+  for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+      errors.add(error.getField() + ": " + error.getDefaultMessage());
   }
+  for (ObjectError error : ex.getBindingResult().getGlobalErrors()) {
+      errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
+  }
+  ErrorResponse errorResponse =new ErrorResponse(
+    HttpStatus.BAD_REQUEST.value(), errors.toString(), ExceptionCodes.VALIDATION_FAILED);
+
+  return ResponseEntity.status(ex.getStatusCode()).body(new  ResponseDto(null,errorResponse,null));
+
+}
+
 
   @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<Map<String, List<String>>> handleTypeMismatchErrors(HttpMessageNotReadableException ex) {
+  public ResponseEntity<ResponseDto> handleTypeMismatchErrors(HttpMessageNotReadableException ex) {
     List<String> errors = new ArrayList<String>();
     errors.add(ex.getMessage());
-    return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    ErrorResponse errorResponse =new ErrorResponse(
+      HttpStatus.BAD_REQUEST.value(), ex.getMessage(), ExceptionCodes.TYPE_MISMATCH);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new  ResponseDto(null,errorResponse,null));
+
+  }
+
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ResponseDto> OtherErrors(Exception ex) {
+    List<String> errors = new ArrayList<String>();
+    errors.add(ex.getMessage());
+    ErrorResponse errorResponse =new ErrorResponse(
+      HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), ExceptionCodes.INTERNAL_SERVER_ERROR);
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new  ResponseDto(null,errorResponse,null));
+
   }
   
 
-  private Map<String, List<String>> getErrorsMap(List<String> errors) {
-    Map<String, List<String>> errorResponse = new HashMap<>();
-    errorResponse.put("errors", errors);
-    return errorResponse;
   }
 
-}
