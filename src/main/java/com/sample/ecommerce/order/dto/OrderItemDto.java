@@ -1,6 +1,7 @@
 package com.sample.ecommerce.order.dto;
 
-import jakarta.annotation.Nonnull;
+
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,10 +16,10 @@ import lombok.Setter;
 @Builder
 public class OrderItemDto {
   
-  @Nonnull
-  private int productId;
+  @NotNull
+  private Integer productId;
 
-  @Nonnull
+  @NotNull
   @Min(1)
-  private int quantity;
+  private Integer quantity;
 }

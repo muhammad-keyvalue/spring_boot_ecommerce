@@ -1,8 +1,9 @@
 package com.sample.ecommerce.order.dto;
 
 import com.sample.ecommerce.order.constants.OrderStatus;
-import jakarta.annotation.Nonnull;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,12 +18,12 @@ import lombok.Setter;
 @Builder
 public class OrderDto {
 
-  @Nonnull
+  @NotNull
   private Integer customerId;
  
   private OrderStatus status;
-
-  @Nonnull
+  
+  @NotEmpty
   @Valid
   private OrderItemDto[] orderItems;
 }
