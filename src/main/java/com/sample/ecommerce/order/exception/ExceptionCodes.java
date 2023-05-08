@@ -5,6 +5,10 @@ public final class ExceptionCodes {
   }
   
   public static final String OBJECT_NOT_FOUND = "OBJECT_NOT_FOUND";
+  public static final String TYPE_MISMATCH = "TYPE_MISMATCH";
+  public static final String VALIDATION_FAILED = "VALIDATION_FAILED";
+  public static final String INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
+
 
 }
 
