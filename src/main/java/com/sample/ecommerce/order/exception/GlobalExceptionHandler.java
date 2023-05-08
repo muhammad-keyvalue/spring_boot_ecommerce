@@ -22,48 +22,52 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(value = CommonException.class)
   public @ResponseBody ResponseEntity<ResponseDto> handleCommonException(CommonException ex) {
     log.error(ex.getStatusCode() + ":" + ex.getMessage());
-    ErrorResponse errorResponse =new ErrorResponse(
-      ex.getStatusCode().value(), ex.getMessage(), ex.getErrorCode());
-    return ResponseEntity.status(ex.getStatusCode()).body(new ResponseDto(null,errorResponse,null));
+    ErrorResponse errorResponse = new ErrorResponse(
+         ex.getStatusCode().value(), ex.getMessage(), ex.getErrorCode());
+    return ResponseEntity.status(ex.getStatusCode())
+    .body(new ResponseDto(null, errorResponse, null));
   }
 
-@ExceptionHandler(MethodArgumentNotValidException.class)
-public @ResponseBody ResponseEntity<ResponseDto> handleValidationErrors(MethodArgumentNotValidException ex) {
-  List<String> errors = new ArrayList<String>();
-  for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public @ResponseBody ResponseEntity<ResponseDto> 
+  handleValidationErrors(MethodArgumentNotValidException ex) {
+    List<String> errors = new ArrayList<String>();
+    for (FieldError error : ex.getBindingResult().getFieldErrors()) {
       errors.add(error.getField() + ": " + error.getDefaultMessage());
-  }
-  for (ObjectError error : ex.getBindingResult().getGlobalErrors()) {
+    }
+    for (ObjectError error : ex.getBindingResult().getGlobalErrors()) {
       errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
+    }
+    ErrorResponse errorResponse = new ErrorResponse(
+         HttpStatus.BAD_REQUEST.value(), errors.toString(), ExceptionCodes.VALIDATION_FAILED);
+
+    return ResponseEntity.status(ex.getStatusCode())
+          .body(new  ResponseDto(null, errorResponse, null));
+
   }
-  ErrorResponse errorResponse =new ErrorResponse(
-    HttpStatus.BAD_REQUEST.value(), errors.toString(), ExceptionCodes.VALIDATION_FAILED);
-
-  return ResponseEntity.status(ex.getStatusCode()).body(new  ResponseDto(null,errorResponse,null));
-
-}
 
 
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<ResponseDto> handleTypeMismatchErrors(HttpMessageNotReadableException ex) {
     List<String> errors = new ArrayList<String>();
     errors.add(ex.getMessage());
-    ErrorResponse errorResponse =new ErrorResponse(
-      HttpStatus.BAD_REQUEST.value(), ex.getMessage(), ExceptionCodes.TYPE_MISMATCH);
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new  ResponseDto(null,errorResponse,null));
-
+    ErrorResponse errorResponse = new ErrorResponse(
+        HttpStatus.BAD_REQUEST.value(), ex.getMessage(), ExceptionCodes.TYPE_MISMATCH);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+    .body(new  ResponseDto(null, errorResponse, null));
   }
 
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<ResponseDto> OtherErrors(Exception ex) {
+  public ResponseEntity<ResponseDto> handleInternalServerErrorException(Exception ex) {
     List<String> errors = new ArrayList<String>();
     errors.add(ex.getMessage());
-    ErrorResponse errorResponse =new ErrorResponse(
-      HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), ExceptionCodes.INTERNAL_SERVER_ERROR);
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new  ResponseDto(null,errorResponse,null));
+    ErrorResponse errorResponse =
+        new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), 
+        ExceptionCodes.INTERNAL_SERVER_ERROR);
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    .body(new  ResponseDto(null, errorResponse, null));
 
   }
-  
 
-  }
+}
 

@@ -47,8 +47,9 @@ public class OrderController {
   @GetMapping("/paginated")
   public Page<Order> findAll(@RequestParam int page, @RequestParam int size,
       @RequestParam(required = false) Sort sort) {
-    if (sort == null)
+    if (sort == null) {
       sort = Sort.unsorted();
+    }
     return orderservice.findAll(page, size, sort);
   }
 
@@ -56,7 +57,6 @@ public class OrderController {
   public List<Order> findAll() {
     return orderservice.findAll();
   }
-
 
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.CREATED)

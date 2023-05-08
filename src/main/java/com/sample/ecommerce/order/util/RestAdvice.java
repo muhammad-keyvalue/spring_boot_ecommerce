@@ -31,9 +31,9 @@ public class RestAdvice implements ResponseBodyAdvice<Object> {
       MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType,
       ServerHttpRequest request, ServerHttpResponse response) {
 
-      ResponseDto responseDto= new ResponseDto();
-      responseDto.setData(body);
-      return responseDto;
+    ResponseDto responseDto = new ResponseDto();
+    responseDto.setData(body);
+    return responseDto;
 
   }
 
