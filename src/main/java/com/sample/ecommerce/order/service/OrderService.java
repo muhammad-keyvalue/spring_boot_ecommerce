@@ -100,10 +100,10 @@ public class OrderService {
     return repository.findAll();
   }
 
-  public void delete(int id) {
+  public String delete(int id) {
     Order order = this.findOne(id);
     repository.delete(order);
-    log.info("Deleted order with order_id - {}", id);
+    return "Deleted order with order_id - " + id;
   }
 
   public Order update(Integer orderId, UpdateOrderDto updateOrderDto) {

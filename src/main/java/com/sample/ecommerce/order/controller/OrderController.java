@@ -5,7 +5,9 @@ import com.sample.ecommerce.order.dto.UpdateOrderDto;
 import com.sample.ecommerce.order.model.Order;
 import com.sample.ecommerce.order.service.OrderService;
 import jakarta.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -21,27 +23,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @RestController
 @RequestMapping("/order/v1/orders")
 public class OrderController {
 
   @Autowired
-  OrderService orderservice;
+  OrderService orderService;
 
   /*
-   * To check health, we can use actuator which provides the endpoint
+   * To check health, we can use actuator by using the endpoint
    * http://localhost:8080/actuator/health
    */
 
   @PostMapping()
   @ResponseStatus(HttpStatus.CREATED)
   public Order create(@Valid @RequestBody OrderDto createOrder) {
-    return orderservice.create(createOrder);
+    return orderService.create(createOrder);
   }
 
   @GetMapping("/{id}")
   public Order findOne(@PathVariable int id) {
-    return orderservice.findOne(id);
+    return orderService.findOne(id);
   }
 
   @GetMapping("/paginated")
@@ -50,23 +53,25 @@ public class OrderController {
     if (sort == null) {
       sort = Sort.unsorted();
     }
-    return orderservice.findAll(page, size, sort);
+    return orderService.findAll(page, size, sort);
   }
 
   @GetMapping()
   public List<Order> findAll() {
-    return orderservice.findAll();
+    return orderService.findAll();
   }
 
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.CREATED)
   public Order update(@PathVariable int id, @Valid @RequestBody UpdateOrderDto updateOrder) {
-    return orderservice.update(id, updateOrder);
+    return orderService.update(id, updateOrder);
   }
 
   @DeleteMapping("/{id}")
-  public void delete(@PathVariable int id) {
-    orderservice.delete(id);
+  public Map<String, String> delete(@PathVariable int id) {
+    Map<String, String> message = new HashMap<String, String>();
+    message.put("message", orderService.delete(id));
+    return message;
   }
 
 }
