@@ -61,7 +61,6 @@ public class OrderService {
     int price;
     order = order.toBuilder()
         .status((orderDto.getStatus() != null) ? orderDto.getStatus() : OrderStatus.INITIATED)
-        .totalQuantity(totalQuantity).totalPrice(totalPrice)
         .customer(customerRepository.findById(orderDto.getCustomerId()).get()).build();
 
     for (OrderItemDto item : orderDto.getOrderItems()) {
@@ -77,6 +76,8 @@ public class OrderService {
     }
 
     order.setOrderItems(orderItems);
+    order.setTotalQuantity(totalQuantity);
+    order.setTotalPrice(totalPrice);
 
     return order;
 
@@ -110,7 +111,8 @@ public class OrderService {
     Order order = this.findOne(orderId);
     log.info("Updating order with order_id - {} ", orderId);
     OrderDto orderDto = OrderDto.builder().customerId(order.getCustomer().getId())
-        .status(updateOrderDto.getStatus()).orderItems(updateOrderDto.getOrderItems()).build();
+        .status(updateOrderDto.getStatus()).orderItems(updateOrderDto.getOrderItems())
+        .build();
     Order updatedOrder = createOrderfromDto(order, orderDto);
     log.info(
         "Order details : order_id - {}, total_price - {}, total_quantity - {},"
