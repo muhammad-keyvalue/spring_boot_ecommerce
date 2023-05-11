@@ -5,23 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 
-import java.util.Optional;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
-
 import com.sample.ecommerce.order.constants.OrderStatus;
 import com.sample.ecommerce.order.dto.OrderDto;
-import com.sample.ecommerce.order.dto.OrderItemDto;
+import com.sample.ecommerce.order.dto.UpdateOrderDto;
 import com.sample.ecommerce.order.exception.ObjectNotFoundException;
-import com.sample.ecommerce.order.model.Category;
 import com.sample.ecommerce.order.model.Customer;
 import com.sample.ecommerce.order.model.Order;
 import com.sample.ecommerce.order.model.OrderItem;
@@ -30,8 +17,25 @@ import com.sample.ecommerce.order.repository.CustomerRepository;
 import com.sample.ecommerce.order.repository.OrderRepository;
 import com.sample.ecommerce.order.repository.ProductRepository;
 import com.sample.ecommerce.order.service.OrderService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
+/**
+ * Unit test for order service.
+ */
+
+@SpringBootTest()
 @ActiveProfiles("test")
 public class OrderServiceTests {
 
@@ -47,120 +51,139 @@ public class OrderServiceTests {
   @Autowired
   OrderService orderService;
 
+  final int randomId = 1;
+  final int orderId = 1;
+  final int customerId = 1;
+  final int productId = 1;
+  final int quantity = 2;
+  final int totalQuantity = 4;
+  final int totalPrice = 40;
+
   @Test
   @DisplayName("Should be able to get order by id")
   void getOrderByIdTest() {
-    int randomId = 2;
-    final int totalPrice = 20;
-    final int quantity = 4;
-    Order order = Order.builder()
-        .id(randomId)
-        .totalQuantity(quantity)
-        .totalPrice(totalPrice)
-        .build();
-
+    Order order = Generator.getSampleOrder(randomId, totalQuantity, totalPrice);
     Mockito.when(orderRepository.findById(anyInt())).thenReturn(Optional.of(order));
-    Order obtainedOrder = orderService.findOne(1);
+    Order obtainedOrder = orderService.findOne(orderId);
     assertEquals(obtainedOrder, order);
+  }
+
+  @Test
+  @DisplayName("Should fail get-order-by-id on providing non existing order id")
+  void failGetOrderByIdOnInvalidIdTest() {
+    Mockito.when(orderRepository.findById(anyInt()))
+        .thenThrow(new ObjectNotFoundException(Order.class));
+    assertThrows(ObjectNotFoundException.class, () -> orderService.findOne(orderId));
+
   }
 
   @Test
   @DisplayName("Should be able to create an order")
-  void createdOrderTest(){
-    final int randomId = 5;
-    final int customerId =1;
-    final int productId = 2;
-    final int totalPrice = 20;
-    final int totalQuantity = 4;
+  void createdOrderTest() {
+    Mockito.when(customerRepository.findById(any()))
+        .thenReturn(Optional.of(Generator.getSampleCustomer(customerId)));
+    Mockito.when(productRepository.findById(any()))
+        .thenReturn(Optional.of(Generator.getSampleProduct(productId)));
 
-    Mockito.when(customerRepository.findById(customerId))
-    .thenReturn(Optional.of(getSampleCustomer(customerId)));
-    Mockito.when(productRepository.findById(productId))
-    .thenReturn(Optional.of(getSampleProduct(productId)));
+    Order order = Generator.getSampleOrder(randomId, totalQuantity, totalPrice);
 
-    Order order = Order.builder()
-    .id(randomId)
-    .customer(getSampleCustomer(customerId))
-    .status(OrderStatus.INITIATED)
-    .totalQuantity(totalQuantity)
-    .totalPrice(totalPrice)
-    .build();
-
-    List<OrderItem> orderItems = getSampleOrderItems(order,productId,totalQuantity);
+    List<OrderItem> orderItems = Generator.getSampleOrderItems(order, productId, quantity);
     order.setOrderItems(orderItems);
 
-    OrderDto orderDto = OrderDto.builder()
-                        .customerId(customerId)
-                        .status(OrderStatus.INITIATED)
-                        .orderItems(getSampleOrderItemsDto(productId,totalQuantity))
-                        .build();
+    OrderDto orderDto = Generator.getSampleOrderDto(productId, quantity);
 
     Mockito.when(orderRepository.save(any())).thenReturn(order);
     Order obtainedOrder = orderService.create(orderDto);
     assertEquals(obtainedOrder, order);
-}
-
-@Test
-  @DisplayName("Should fail on creating order with invalid product")
-  void failOrderOnInvalidProductTest(){
-
-    Mockito.when(customerRepository.findById(anyInt()))
-    .thenReturn(Optional.of(getSampleCustomer(1)));
-    Mockito.when(productRepository.findById(anyInt()))
-    .thenThrow(new ObjectNotFoundException(Product.class));
-
-    OrderDto orderDto = OrderDto.builder()
-                        .customerId(1)
-                        .status(OrderStatus.INITIATED)
-                        .orderItems(getSampleOrderItemsDto(1,4))
-                        .build();
-
-    assertThrows(ObjectNotFoundException.class,() -> orderService.create(orderDto));
   }
 
-private Customer getSampleCustomer(int customerId){
- return Customer.builder()
-        .id(customerId)
-        .name("Manu")
-				.phone("+91934345")
-				.email("manukk@gmail.com")
-				.street("acd")
-				.state("asd")
-				.profilePic("http://imageurl")
-				.countryCode("KWI")
-				.build();
+  @Test
+  @DisplayName("Should fail on creating order with invalid product")
+  void failOrderOnInvalidProductTest() {
 
-}
+    Mockito.when(customerRepository.findById(anyInt()))
+        .thenReturn(Optional.of(Generator.getSampleCustomer(customerId)));
+    Mockito.when(productRepository.findById(anyInt()))
+        .thenThrow(new ObjectNotFoundException(Product.class));
 
-private OrderItemDto[] getSampleOrderItemsDto(int productId,int quantity){
-  OrderItemDto[] orderItems = new OrderItemDto[1] ;
-  orderItems[0]= OrderItemDto.builder()
-          .productId(productId)
-          .quantity(quantity)
-          .build();
-  return orderItems;
-}
+    OrderDto orderDto = Generator.getSampleOrderDto(productId, quantity);
 
-private Product getSampleProduct(int productId){
-return Product.builder()
-      .name("Mobile")
-      .image("http//:ughuogwxsjhg.com")
-      .description(("Samsung Galaxy A7"))
-      .unitPrice(5)
-      .category(getSampleCategory())
-      .build();
-}
+    assertThrows(ObjectNotFoundException.class, () -> orderService.create(orderDto));
+  }
 
-private Category getSampleCategory(){
-  return Category.builder()
-        .name("Electronics")
+  @Test
+  @DisplayName("Should fail on creating order with invalid customer")
+  void failOrderOnInvalidCustomerTest() {
+
+    Mockito.when(customerRepository.findById(anyInt()))
+        .thenReturn(Optional.empty());
+    Mockito.when(productRepository.findById(anyInt()))
+        .thenReturn(Optional.of(Generator.getSampleProduct(productId)));
+
+    OrderDto orderDto = Generator.getSampleOrderDto(productId, quantity);
+
+    assertThrows(ObjectNotFoundException.class, () -> orderService.create(orderDto));
+  }
+
+  @Test
+  @DisplayName("Should be able to delete order by id ")
+  void deleteOrderTest() {
+    Order order = Generator.getSampleOrder(randomId, totalQuantity, totalPrice);
+    Mockito.when(orderRepository.findById(anyInt())).thenReturn(Optional.of(order));
+    assertEquals("Deleted order with order_id - " + randomId, orderService.delete(randomId));
+  }
+
+  @Test
+  @DisplayName("Should fail on deleting non existing order")
+  void failDeleteOnInvalidOrderTest() {
+    Mockito.when(orderRepository.findById(anyInt()))
+        .thenThrow(new ObjectNotFoundException(Order.class));
+    assertThrows(ObjectNotFoundException.class, () -> orderService.delete(randomId));
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  @DisplayName("Should get all orders")
+  void getAllOrderTest() {
+    final int page = 0;
+    final int size = 1;
+    List<Order> orders = new ArrayList<Order>();
+    Mockito.when(orderRepository.findAll())
+        .thenReturn(orders);
+    assertEquals(orders, orderService.findAll());
+
+    PageRequest pageable = PageRequest.of(page, size, Sort.unsorted());
+    Page<Order> pagedOrder = Mockito.mock(Page.class);
+    Mockito.when(orderRepository.findAll(pageable)).thenReturn(pagedOrder);
+    assertEquals(pagedOrder, orderService.findAll(page, size, Sort.unsorted()));
+  }
+
+  @Test
+  @DisplayName("Should update order with given id ")
+  void updateOrderTest() {
+    Order order = Generator.getSampleOrder(randomId, totalQuantity, totalPrice);
+    Mockito.when(orderRepository.save(any())).thenReturn(order);
+    Mockito.when(orderRepository.findById(any()))
+        .thenReturn(Optional.of(order));
+    Mockito.when(customerRepository.findById(any()))
+        .thenReturn(Optional.of(Generator.getSampleCustomer(customerId)));
+    Mockito.when(productRepository.findById(any()))
+        .thenReturn(Optional.of(Generator.getSampleProduct(productId)));
+    UpdateOrderDto dto = UpdateOrderDto.builder()
+        .orderItems(Generator.getSampleOrderItemsDto(productId, quantity))
+        .status(OrderStatus.INITIATED)
         .build();
-}
 
-private List<OrderItem> getSampleOrderItems(Order order,int productId, int quantity){
-  List<OrderItem> orderItems = new ArrayList<OrderItem>();
-  orderItems.add(OrderItem.builder().order(order).quantity(quantity).product(getSampleProduct(productId)).build());
-return orderItems;
-}
+    assertEquals(order, orderService.update(orderId, dto));
+  }
+
+  @Test
+  @DisplayName("Should fail on updating invalid order")
+  void failUpdateOnInvalidOrderIdTest() {
+    Mockito.when(orderRepository.findById(anyInt()))
+        .thenThrow(new ObjectNotFoundException(Order.class));
+    UpdateOrderDto dto = new UpdateOrderDto();
+    assertThrows(ObjectNotFoundException.class, () -> orderService.update(orderId, dto));
+  }
 
 }
