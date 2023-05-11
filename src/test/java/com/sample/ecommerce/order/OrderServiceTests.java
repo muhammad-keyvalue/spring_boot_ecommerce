@@ -9,7 +9,6 @@ import com.sample.ecommerce.order.constants.OrderStatus;
 import com.sample.ecommerce.order.dto.OrderDto;
 import com.sample.ecommerce.order.dto.UpdateOrderDto;
 import com.sample.ecommerce.order.exception.ObjectNotFoundException;
-import com.sample.ecommerce.order.model.Customer;
 import com.sample.ecommerce.order.model.Order;
 import com.sample.ecommerce.order.model.OrderItem;
 import com.sample.ecommerce.order.model.Product;
