@@ -51,7 +51,7 @@ public class OrderService {
     return createdOrder;
   }
 
-  public Order createOrderfromDto(Order order, OrderDto orderDto) {
+  private Order createOrderfromDto(Order order, OrderDto orderDto) {
     int totalQuantity = 0;
     int totalPrice = 0;
     List<OrderItem> orderItems = new ArrayList<OrderItem>();
